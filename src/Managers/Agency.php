@@ -19,21 +19,26 @@ class Agency
     public function __construct()
     {
         $this->client = Http::withToken(config('statamic-agency.account_token'))
-            ->baseUrl('https://agency.thoughtcollective.com/api/v1/');
+            ->withHeader('Accept', 'application/json')
+            ->baseUrl('https://statamic-agency-app.test/api/');
     }
 
     public function negotiateToken()
     {
+        if (! config('statamic-agency.account_token')) {
+            return;
+        }
+
         // hit remote API with the agency token, app URL and IP (?) in exchange for an installation_id
         // to authenticate incoming requests with
         // need some way of recovering the same token in case of the data being cleared
         $response = $this->client->post('negotiate', [
-            'url' => app()->url(),
+            'url' => config('app.url'),
             'ip' => request()->server('SERVER_ADDR') ?? request()->server('LOCAL_ADDR'),
         ]);
 
         if (! $response->successful()) {
-            Log::error('Failed to negotiate token with agency server');
+            Log::error('Failed to negotiate token with agency server', ['response' => $response->body()]);
 
             return;
         }
@@ -55,11 +60,12 @@ class Agency
 
         $payload = [
             'installation_id' => $installationId,
-            'name' => config('app.name'),
-            'environment' => app()->environment(),
             'laravel' => [
                 'cache' => config('cache.default'),
+                'environment' => app()->environment(),
                 'queue' => config('queue.default'),
+                'name' => config('app.name'),
+                'url' => config('app.url'),
                 'version' => app()->version(),
             ],
             'php' => [

@@ -5,7 +5,7 @@ namespace Thoughtco\StatamicAgency;
 use Illuminate\Console\Scheduling\Schedule;
 use Statamic\Facades\Addon;
 use Statamic\Providers\AddonServiceProvider;
-use Thoughtco\StatamicCacheTracker\Facades\Agency;
+use Thoughtco\StatamicAgency\Facades\Agency;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -20,9 +20,9 @@ class ServiceProvider extends AddonServiceProvider
         ], 'statamic-agency-config');
     }
 
-    public function booted()
+    public function booted(\Closure $callback)
     {
-        parent::booted();
+        parent::booted($callback);
 
         $schedule = $this->app->make(Schedule::class);
         $schedule->command('agency:update-environment')->everyFourHours();

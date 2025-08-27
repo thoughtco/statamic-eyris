@@ -1,6 +1,6 @@
 <?php
 
-namespace Thoughtco\StatamicCacheTracker\Facades;
+namespace Thoughtco\StatamicAgency\Facades;
 
 use Illuminate\Support\Facades\Facade;
 use Thoughtco\StatamicAgency\Managers\Agency as Manager;
