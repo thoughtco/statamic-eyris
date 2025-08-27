@@ -1,0 +1,43 @@
+{
+    "name": "thoughtco/statamic-agency",
+    "autoload": {
+        "psr-4": {
+            "Thoughtco\\StatamicAgency\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Thoughtco\\StatamicAgency\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "pixelfear/composer-dist-plugin": "^0.1.5",
+        "statamic/cms": "^5.0 || ^6.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13",
+        "mockery/mockery": "^1.3.1",
+        "nunomaduro/collision": "^8.0",
+        "orchestra/testbench": "^9.0",
+        "pestphp/pest": "^2.24",
+        "phpunit/phpunit": "^10.0"
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic Agency",
+            "description": "Manage your Statamic sites from a centralised dashboard."
+        },
+        "laravel": {
+            "providers": [
+                "Thoughtco\\StatamicAgency\\ServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "pixelfear/composer-dist-plugin": true
+        }
+    }
+}
