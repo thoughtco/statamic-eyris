@@ -13,6 +13,8 @@ class ServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
+        $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+
         $this->mergeConfigFrom($config = __DIR__.'/../config/statamic-agency.php', 'statamic-agency');
 
         $this->publishes([

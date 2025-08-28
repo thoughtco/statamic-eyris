@@ -2,8 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api/statamic-agency')
+Route::prefix('!/statamic-agency')
     ->middleware(\Thoughtco\StatamicAgency\Http\Middleware\VerifyAgencyHeaders::class)
     ->group(function () {
-        // tbc
+        Route::post('update-environment', function() {
+            \Thoughtco\StatamicAgency\Facades\Agency::updateEnvironment();
+
+            return response()->json(['success' => true]);
+        });
     });
