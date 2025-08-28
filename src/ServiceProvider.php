@@ -38,6 +38,11 @@ class ServiceProvider extends AddonServiceProvider
         $addonSettings = Addon::get('thoughtco/statamic-agency')->settings();
 
         if ($addonSettings->get('installation_id')) {
+
+            if ($addonSettings->get('last_environment_update', 0) < now()->subMinutes(60)->timestamp) {
+                Agency::updateEnvironment();
+            }
+
             return;
         }
 

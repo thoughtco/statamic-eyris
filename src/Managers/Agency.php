@@ -3,7 +3,6 @@
 namespace Thoughtco\StatamicAgency\Managers;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Statamic\Facades\Addon;
@@ -54,7 +53,13 @@ class Agency
 
     public function updateEnvironment()
     {
-        if (! $installationId = Addon::get('thoughtco/statamic-agency')->settings()->get('installation_id')) {
+        $settings = Addon::get('thoughtco/statamic-agency')->settings();
+
+        if (! $installationId = $settings->get('installation_id')) {
+            return;
+        }
+
+        if ($settings->get('last_environment_update', 0) > now()->subMinutes(60)->timestamp) {
             return;
         }
 
@@ -83,7 +88,6 @@ class Agency
                             'version' => $addon->version(),
                         ];
                     })->all(),
-                'support_details' => Artisan::call('statamic:support:details'),
                 'pro' => Statamic::pro(),
                 'version' => Statamic::version(),
             ],
@@ -93,5 +97,8 @@ class Agency
 
         // @TODO: do we only let them add to a meta array?
         $this->client->post('environment', $this->runHooks('update-environment-payload', $payload));
+
+        $settings->set('last_environment_update', now()->timestamp);
+        $settings->save();
     }
 }
