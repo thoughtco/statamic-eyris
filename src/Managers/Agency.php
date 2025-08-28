@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Statamic\Facades\Addon;
+use Statamic\Facades\Stache;
 use Statamic\Statamic;
 use Statamic\Support\Traits\Hookable;
 
@@ -67,6 +68,7 @@ class Agency
             'installation_id' => $installationId,
             'laravel' => [
                 'cache' => config('cache.default'),
+                'debug' => config('app.debug'),
                 'environment' => app()->environment(),
                 'queue' => config('queue.default'),
                 'name' => config('app.name'),
@@ -89,6 +91,7 @@ class Agency
                         ];
                     })->all(),
                 'pro' => Statamic::pro(),
+                'watcher_enabled' => Stache::isWatcherEnabled(),
                 'version' => Statamic::version(),
             ],
         ];
