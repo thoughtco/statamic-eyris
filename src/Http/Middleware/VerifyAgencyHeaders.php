@@ -9,11 +9,11 @@ class VerifyAgencyHeaders
 {
     public function handle($request, Closure $next)
     {
-        if (! config('statamic.agency.enabled')) {
+        if (! config('statamic-agency.enabled')) {
             return $this->invalidResponse();
         }
 
-        if (! $token = config('statamic.agency.account_token')) {
+        if (! $token = config('statamic-agency.account_token')) {
             return $this->invalidResponse();
         }
 
@@ -25,7 +25,7 @@ class VerifyAgencyHeaders
             return $this->invalidResponse();
         }
 
-        if ($addonSettings->get('installation_id') == $request->header('X-Agency-Installation-Id')) {
+        if ($addonSettings->get('installation_id') != $request->header('X-Agency-Installation-Id')) {
             return $this->invalidResponse();
         }
 
