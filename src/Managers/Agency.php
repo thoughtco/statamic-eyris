@@ -3,6 +3,7 @@
 namespace Thoughtco\StatamicAgency\Managers;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Statamic\Facades\Addon;
@@ -64,6 +65,12 @@ class Agency
             return;
         }
 
+        $opcacheEnabled = false;
+        try {
+            $opcacheEnabled = opcache_get_status();
+            $opcacheEnabled = $opcacheEnabled['opcache_enabled'];
+        } catch (\Throwable $e) {}
+
         $payload = [
             'installation_id' => $installationId,
             'laravel' => [
@@ -76,6 +83,7 @@ class Agency
                 'version' => app()->version(),
             ],
             'php' => [
+                'opcache_enabled' => $opcacheEnabled,
                 'os' => PHP_OS,
                 'version' => PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.'.'.PHP_RELEASE_VERSION,
             ],
@@ -84,22 +92,38 @@ class Agency
                     ->map(function ($addon) {
                         return [
                             'name' => $addon->name(),
-                            'latest' => $addon->changelog()?->latest()->version,
                             'marketplace_url' => $addon->marketplaceUrl(),
                             'package' => $addon->package(),
                             'version' => $addon->version(),
                         ];
                     })->all(),
+                'static_caching' => config('statamic.static_caching.strategy'),
                 'pro' => Statamic::pro(),
                 'watcher_enabled' => Stache::isWatcherEnabled(),
                 'version' => Statamic::version(),
             ],
+            'other' => $this->runHooks('update-environment-payload', []),
+            'packages' => [],
         ];
 
-        // do we check for other common packages like livewire/inertia?
+        if ($composer = File::json(base_path('composer.json'))) {
+            if ($lock = File::json(base_path('composer.lock'))) {
+                $lock = collect($lock['packages'] ?? []);
 
-        // @TODO: do we only let them add to a meta array?
-        $this->client->post('environment', $this->runHooks('update-environment-payload', $payload));
+                $payload['packages'] = collect($composer['require'] ?? [])
+                    ->map(function ($version, $package) use ($lock) {
+                        if (! $lockPackage = $lock->firstWhere('name', $package)) {
+                            return;
+                        }
+
+                        return $lockPackage['version'];
+                    })
+                    ->filter()
+                    ->all();
+            }
+        }
+
+        $this->client->post('environment', $payload);
 
         $settings->set('last_environment_update', now()->timestamp);
         $settings->save();

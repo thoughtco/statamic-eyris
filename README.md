@@ -32,13 +32,12 @@ Every 4 hours Agency will update the current environment, including your Statami
 
 
 ## Hooks
-If you want to return or modify the data sent to Agency, you can hook into the update environment payload:
+If you want to return extra data to Agency, you can hook into the update environment payload:
 
 ```php
 \Thoughtco\StatamicAgency\Facades\Agency::hook('update-environment-payload', function ($payload, $next) {
-    // do something to payload
+    // do something to payload, return a key-ed array
+    // eg ['my_key' => 'my_value']
     return $next($payload);
 );
 ```
-
-While we have provided you with the ability to modify any of the payload, we strongly advise you do not change any of the data Agency collects, as it may cause errors in the system.
