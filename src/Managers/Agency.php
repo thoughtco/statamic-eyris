@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Statamic\Facades\Addon;
 use Statamic\Facades\Stache;
 use Statamic\Statamic;
@@ -69,7 +70,8 @@ class Agency
         try {
             $opcacheEnabled = opcache_get_status();
             $opcacheEnabled = $opcacheEnabled['opcache_enabled'];
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         $payload = [
             'installation_id' => $installationId,
@@ -106,21 +108,21 @@ class Agency
             'packages' => [],
         ];
 
-        if ($composer = File::json(base_path('composer.json'))) {
-            if ($lock = File::json(base_path('composer.lock'))) {
-                $lock = collect($lock['packages'] ?? []);
+        if ($lock = File::json(base_path('composer.lock'))) {
+            $lock = collect($lock['packages'] ?? []);
 
-                $payload['packages'] = collect($composer['require'] ?? [])
-                    ->map(function ($version, $package) use ($lock) {
-                        if (! $lockPackage = $lock->firstWhere('name', $package)) {
-                            return;
-                        }
-
-                        return $lockPackage['version'];
-                    })
-                    ->filter()
-                    ->all();
-            }
+            $payload['packages'] = collect($lock)
+                ->map(function ($package) {
+                    return [
+                        'name' => $package['name'],
+                        'version' => $package['version'],
+                        'is_public' => Str::of(Arr::get($package, 'dist.url', ''))->contains('://'),
+                    ];
+                })
+                ->filter()
+                ->values()
+                ->sortBy('name')
+                ->all();
         }
 
         $this->client->post('environment', $payload);
