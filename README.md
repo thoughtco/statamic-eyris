@@ -36,8 +36,8 @@ If you want to return extra data to Agency, you can hook into the update environ
 
 ```php
 \Thoughtco\StatamicAgency\Facades\Agency::hook('update-environment-payload', function ($payload, $next) {
-    // do something to payload, return a key-ed array
-    // eg ['my_key' => 'my_value']
+    // add to payload, this should be in the following format
+    // eg [ ['label' => 'My label', 'value' => 'my_value'] ]
     return $next($payload);
 );
 ```

@@ -3,7 +3,6 @@
 namespace Thoughtco\StatamicAgency;
 
 use Illuminate\Console\Scheduling\Schedule;
-use Statamic\Facades\Addon;
 use Statamic\Providers\AddonServiceProvider;
 use Thoughtco\StatamicAgency\Facades\Agency;
 
@@ -37,7 +36,7 @@ class ServiceProvider extends AddonServiceProvider
 
     private function setupIfRequired()
     {
-        $addonSettings = Addon::get('thoughtco/statamic-agency')->settings();
+        $addonSettings = Agency::settings();
 
         if ($addonSettings->get('installation_id')) {
 
@@ -49,8 +48,8 @@ class ServiceProvider extends AddonServiceProvider
         }
 
         if ($token = Agency::negotiateToken()) {
-            $addonSettings->set('installation_id', $token);
-            $addonSettings->save();
+            $addonSettings->put('installation_id', $token);
+            Agency::saveSettings($addonSettings);
 
             Agency::updateEnvironment();
         }

@@ -3,12 +3,14 @@
 namespace Thoughtco\StatamicAgency\Managers;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Statamic\Facades\Addon;
 use Statamic\Facades\Stache;
+use Statamic\Facades\YAML;
 use Statamic\Statamic;
 use Statamic\Support\Traits\Hookable;
 
@@ -18,11 +20,15 @@ class Agency
 
     public $client;
 
+    public bool $supportsAddonSettings = false;
+
     public function __construct()
     {
         $this->client = Http::withToken(config('statamic-agency.account_token'))
             ->withHeader('Accept', 'application/json')
             ->baseUrl('https://statamic-agency-app.test/api/');
+
+        $this->supportsAddonSettings = substr(Statamic::version(), 0, 1) >= 6;
     }
 
     public function negotiateToken()
@@ -54,16 +60,46 @@ class Agency
         return $installationId;
     }
 
+    public function saveSettings(Collection $settings): void
+    {
+        if ($this->supportsAddonSettings) {
+            Addon::get('thoughtco/statamic-agency')->settings()->set($settings->all())->save();
+
+            return;
+        }
+
+        File::put(resource_path('addons/statamic-agency.yaml'), json_encode($settings->all()));
+    }
+
+    public function settings(): Collection
+    {
+        if ($this->supportsAddonSettings) {
+            return collect(Addon::get('thoughtco/statamic-agency')->settings()->all());
+        }
+
+        $path = resource_path('addons/statamic-agency.yaml');
+
+        if (! File::exists($path) || ! $file = File::get($path)) {
+            return collect();
+        }
+
+        if (! $json = YAML::parse($file)) {
+            return collect();
+        }
+
+        return collect($json);
+    }
+
     public function updateEnvironment()
     {
-        $settings = Addon::get('thoughtco/statamic-agency')->settings();
+        $settings = $this->settings();
 
         if (! $installationId = $settings->get('installation_id')) {
             return;
         }
 
         if ($settings->get('last_environment_update', 0) > now()->subMinutes(60)->timestamp) {
-            return;
+            // return;
         }
 
         $opcacheEnabled = false;
@@ -127,7 +163,7 @@ class Agency
 
         $this->client->post('environment', $payload);
 
-        $settings->set('last_environment_update', now()->timestamp);
-        $settings->save();
+        $settings->put('last_environment_update', now()->timestamp);
+        $this->saveSettings($settings);
     }
 }

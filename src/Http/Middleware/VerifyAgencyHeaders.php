@@ -3,7 +3,7 @@
 namespace Thoughtco\StatamicAgency\Http\Middleware;
 
 use Closure;
-use Statamic\Facades\Addon;
+use Thoughtco\StatamicAgency\Facades\Agency;
 
 class VerifyAgencyHeaders
 {
@@ -21,7 +21,7 @@ class VerifyAgencyHeaders
             return $this->invalidResponse();
         }
 
-        if (! $addonSettings = Addon::get('thoughtco/statamic-agency')->settings()) {
+        if (! $addonSettings = Agency::settings()) {
             return $this->invalidResponse();
         }
 
