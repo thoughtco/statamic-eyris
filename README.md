@@ -28,7 +28,7 @@ php artisan vendor:publish --tag=statamic-agency
 ## How it works
 Once installed Agency will detect and create your site on the platform, assigning a unique `Installation ID` for the site.
 
-Every 4 hours Agency will update the current environment, including your Statamic version, your addon versions, and other metrics that will be useful for you to monitor.
+Once every hour Agency will update the current environment, including your Statamic version, your addon versions, and other metrics that will be useful for you to monitor. If you have the task scheduler enabled this will happen via the console, otherwise it will happen as part of a visitor's hit to your website.
 
 
 ## Hooks
