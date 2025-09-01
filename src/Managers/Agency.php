@@ -99,7 +99,7 @@ class Agency
         }
 
         if ($settings->get('last_environment_update', 0) > now()->subMinutes(60)->timestamp) {
-            // return;
+            return;
         }
 
         $opcacheEnabled = false;
@@ -113,12 +113,16 @@ class Agency
             'installation_id' => $installationId,
             'laravel' => [
                 'cache' => config('cache.default'),
+                'config_cached' => app()->configurationIsCached(),
                 'debug' => config('app.debug'),
                 'environment' => app()->environment(),
+                'events_cached' => app()->eventsAreCached(),
                 'queue' => config('queue.default'),
                 'name' => config('app.name'),
+                'routes_cached' => app()->routesAreCached(),
                 'url' => config('app.url'),
                 'version' => app()->version(),
+                'views_cached' => $this->viewsAreCached(),
             ],
             'php' => [
                 'opcache_enabled' => $opcacheEnabled,
@@ -135,8 +139,9 @@ class Agency
                             'version' => $addon->version(),
                         ];
                     })->all(),
-                'static_caching' => config('statamic.static_caching.strategy'),
+                'debugbar_enabled' => debugbar()->enabled(),
                 'pro' => Statamic::pro(),
+                'static_caching' => config('statamic.static_caching.strategy'),
                 'watcher_enabled' => Stache::isWatcherEnabled(),
                 'version' => Statamic::version(),
             ],
@@ -165,5 +170,10 @@ class Agency
 
         $settings->put('last_environment_update', now()->timestamp);
         $this->saveSettings($settings);
+    }
+
+    private function viewsAreCached()
+    {
+        return count(glob(config('view.compiled').'/*.php')) > 0;
     }
 }
