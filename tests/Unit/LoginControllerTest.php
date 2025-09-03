@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
 use Statamic\Facades\User;
-use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Thoughtco\StatamicAgency\Tests\TestCase;
 
 class LoginControllerTest extends TestCase

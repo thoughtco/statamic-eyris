@@ -24,11 +24,20 @@ class Agency
 
     public function __construct()
     {
+        $this->supportsAddonSettings = app()->environment('testing') ? true : substr(Statamic::version(), 0, 1) >= 6;
+    }
+
+    private function client()
+    {
+        if ($this->client) {
+            return $this->client;
+        }
+
         $this->client = Http::withToken(config('statamic-agency.account_token'))
             ->withHeader('Accept', 'application/json')
             ->baseUrl('https://statamic-agency-app-tuue2udz.ams1.preview.ploi.it/api/');
 
-        $this->supportsAddonSettings = app()->environment('testing') ? true : substr(Statamic::version(), 0, 1) >= 6;
+        return $this->client;
     }
 
     public function negotiateToken()
@@ -40,7 +49,7 @@ class Agency
         // hit remote API with the agency token, app URL and IP (?) in exchange for an installation_id
         // to authenticate incoming requests with
         // need some way of recovering the same token in case of the data being cleared
-        $response = $this->client->post('negotiate', [
+        $response = $this->client()->post('negotiate', [
             'url' => config('app.url'),
             'ip' => request()->server('SERVER_ADDR') ?? request()->server('LOCAL_ADDR'),
         ]);
@@ -172,7 +181,7 @@ class Agency
                 ->all();
         }
 
-        $this->client->post('environment', $payload);
+        $this->client()->post('environment', $payload);
 
         $settings->put('last_environment_update', now()->timestamp);
         $this->saveSettings($settings);
