@@ -8,11 +8,21 @@ use Thoughtco\StatamicAgency\Facades\Agency;
 
 class ServiceProvider extends AddonServiceProvider
 {
+    protected $vite = [
+        'publicDirectory' => 'dist',
+        'hotFile' => 'vendor/statamic-agency/hot',
+        'input' => [
+            'resources/js/cp.js',
+        ],
+    ];
+
     public function boot()
     {
         parent::boot();
 
         $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'statamic-agency');
 
         $this->mergeConfigFrom($config = __DIR__.'/../config/statamic-agency.php', 'statamic-agency');
 

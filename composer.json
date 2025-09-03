@@ -13,7 +13,7 @@
     "require": {
         "php": "^8.2",
         "pixelfear/composer-dist-plugin": "^0.1.5",
-        "statamic/cms": "^5.0 || ^6.0"
+        "statamic/cms": "v6.0.0-alpha.4"
     },
     "require-dev": {
         "laravel/pint": "^1.13",
