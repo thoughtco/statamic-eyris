@@ -3,7 +3,7 @@
 namespace Thoughtco\StatamicAgency\Commands;
 
 use Illuminate\Console\Command;
-use Thoughtco\StatamicCacheTracker\Facades\Agency;
+use Thoughtco\StatamicAgency\Facades\Agency;
 
 class UpdateEnvironment extends Command
 {
