@@ -22,6 +22,11 @@ class AnnouncementWidget extends Widget
             return '<div class="card p-0 content">Statamic v6.0 or higher is required to use this widget.</div>';
         }
 
-        return view('statamic-agency::widgets.announcement_widget');
+        return view('statamic-agency::widgets.announcement_widget', [
+            'slides' => [
+                ['text' => 'One', 'button' => ['link' => 'http://www.thoughtcollective.com', 'text' => 'Link']],
+                ['text' => 'Two'],
+            ],
+        ]);
     }
 }

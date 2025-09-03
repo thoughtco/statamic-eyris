@@ -1,3 +1,5 @@
 <ui-card>
-    <announcement-carousel />
+    <announcement-carousel
+        slides='@json($slides)'
+    />
 </ui-card>
