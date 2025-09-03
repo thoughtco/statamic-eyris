@@ -2,11 +2,13 @@
 
 namespace Thoughtco\StatamicAgency\Tests\Unit;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
 use Statamic\Facades\User;
+use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 use Thoughtco\StatamicAgency\Tests\TestCase;
 
 class LoginControllerTest extends TestCase
@@ -123,5 +125,27 @@ class LoginControllerTest extends TestCase
         $id = Str::of($json['url'])->before('?')->afterLast('/');
 
         $this->assertSame(Cache::get('statamic-agency::'.$id), $user->id());
+    }
+
+    #[Test]
+    public function logs_in_a_user_using_a_valid_link()
+    {
+        User::all()->each->delete();
+        User::make()->email('test@test.com')->save();
+        $this->assertSame(1, User::count());
+
+        $this->assertTrue(Auth::guard(config('statamic.users.guards.cp', 'web'))->guest());
+
+        $response = $this
+            ->withToken('some-token')
+            ->withHeader('X-Agency-Installation-Id', 1)
+            ->postJson(route('statamic-agency.generate-login'), [
+                'email' => 'test@test.com',
+            ]);
+
+        $json = $response->json();
+
+        $this->get($json['url'])
+            ->assertRedirect('/cp');
     }
 }
