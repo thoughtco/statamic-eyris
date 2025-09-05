@@ -3,8 +3,10 @@
 namespace Thoughtco\StatamicAgency\Widgets;
 
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Cache;
 use Statamic\Statamic;
 use Statamic\Widgets\Widget;
+use Thoughtco\StatamicAgency\Facades\Agency;
 
 class AnnouncementWidget extends Widget
 {
@@ -22,11 +24,12 @@ class AnnouncementWidget extends Widget
             return '<div class="card p-0 content">Statamic v6.0 or higher is required to use this widget.</div>';
         }
 
+        $announcements = Cache::remember('announcements', 3600, function () {
+            return Agency::getAnnouncements();;
+        });
+
         return view('statamic-agency::widgets.announcement_widget', [
-            'slides' => [
-                ['text' => 'One', 'button' => ['link' => 'http://www.thoughtcollective.com', 'text' => 'Link']],
-                ['text' => 'Two'],
-            ],
+            'slides' => json_decode($announcements),
         ]);
     }
 }

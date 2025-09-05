@@ -90,6 +90,17 @@ class Agency
         return collect($json);
     }
 
+    public function getAnnouncements()
+    {
+        $settings = $this->settings();
+
+        if (! $installationId = $settings->get('installation_id')) {
+            return;
+        }
+
+        return $this->client->post('announcements', ['installation_id' => $installationId])->body();
+    }
+
     public function updateEnvironment()
     {
         $settings = $this->settings();
