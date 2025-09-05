@@ -14,23 +14,16 @@ const slides = JSON.parse(props.slides);
 </script>
 
 <template>
-    <Carousel v-bind="carouselConfig">
+    <Carousel v-bind="carouselConfig" :style="'padding-bottom: ' + (slides.length > 1 ? '42px' : '10px')">
         <Slide v-for="slide in slides">
             <div class="flex flex-col items-center justify-center">
                 <ui-heading v-text="slide.title" size="xl" class="mb-1" />
                 <ui-description v-html="slide.content" />
-                <ui-button
-                    class="mt-4"
-                    :href="slide.button?.link"
-                    size="sm"
-                    v-show="slide.button"
-                    v-text="slide.button?.text"
-                />
             </div>
         </Slide>
 
         <template #addons>
-            <Pagination />
+            <Pagination v-show="slides.length > 1" />
         </template>
     </Carousel>
 </template>
@@ -42,9 +35,5 @@ const slides = JSON.parse(props.slides);
     --vc-pgn-border-radius: 6px;
     --vc-pgn-height: 12px;
     --vc-pgn-width: 12px;
-}
-
-.carousel__track {
-     margin-bottom: 60px;
 }
 </style>
