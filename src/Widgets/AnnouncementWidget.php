@@ -10,7 +10,7 @@ use Thoughtco\StatamicAgency\Facades\Agency;
 
 class AnnouncementWidget extends Widget
 {
-    public static $handle = 'penfold_announcement';
+    public static $handle = 'announcements';
 
     public bool $supportsStatamicUiLibrary = false;
 
