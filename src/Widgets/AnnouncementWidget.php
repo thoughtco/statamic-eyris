@@ -24,12 +24,12 @@ class AnnouncementWidget extends Widget
             return '<div class="card p-0 content">Statamic v6.0 or higher is required to use this widget.</div>';
         }
 
-        $announcements = Cache::remember('announcements', 3600, function () {
-            return Agency::getAnnouncements();;
+        $announcements = Cache::remember($this::$handle.'::announcements', 3600, function () {
+            return Agency::getAnnouncements();
         });
 
         return view('statamic-agency::widgets.announcement_widget', [
-            'slides' => json_decode($announcements),
+            'slides' => $announcements,
         ]);
     }
 }

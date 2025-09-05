@@ -17,7 +17,8 @@ const slides = JSON.parse(props.slides);
     <Carousel v-bind="carouselConfig">
         <Slide v-for="slide in slides">
             <div class="flex flex-col items-center justify-center">
-                <ui-heading v-text="slide.text"></ui-heading>
+                <ui-heading v-text="slide.title" size="xl" class="mb-1" />
+                <ui-description v-html="slide.content" />
                 <ui-button
                     class="mt-4"
                     :href="slide.button?.link"
