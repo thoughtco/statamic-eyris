@@ -41,3 +41,8 @@ If you want to return extra data to Agency, you can hook into the update environ
     return $next($payload);
 );
 ```
+
+## Widget
+We provide an announcement widget to let you push announcements from the system to your site.
+
+To enable it add `announcements` to `config/statamic/cp.php` under the 'widgets' key.
