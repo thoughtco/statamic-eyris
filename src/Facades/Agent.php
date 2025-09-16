@@ -1,11 +1,11 @@
 <?php
 
-namespace Thoughtco\StatamicAgency\Facades;
+namespace Thoughtco\Eyris\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Thoughtco\StatamicAgency\Managers\Agency as Manager;
+use Thoughtco\Eyris\Managers\Agent as Manager;
 
-class Agency extends Facade
+class Agent extends Facade
 {
     /**
      * {@inheritdoc}

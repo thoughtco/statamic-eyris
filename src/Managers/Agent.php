@@ -1,6 +1,6 @@
 <?php
 
-namespace Thoughtco\StatamicAgency\Managers;
+namespace Thoughtco\Eyris\Managers;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -14,7 +14,7 @@ use Statamic\Facades\YAML;
 use Statamic\Statamic;
 use Statamic\Support\Traits\Hookable;
 
-class Agency
+class Agent
 {
     use Hookable;
 
@@ -33,7 +33,7 @@ class Agency
             return $this->client;
         }
 
-        $this->client = Http::withToken(config('statamic-agency.account_token'))
+        $this->client = Http::withToken(config('statamic-eyris.account_token'))
             ->withHeader('Accept', 'application/json')
             ->baseUrl('https://statamic-agency-app-tuue2udz.ams1.preview.ploi.it/api/');
 
@@ -42,7 +42,7 @@ class Agency
 
     public function negotiateToken()
     {
-        if (! config('statamic-agency.account_token')) {
+        if (! config('statamic-eyris.account_token')) {
             return;
         }
 
@@ -55,13 +55,13 @@ class Agency
         ]);
 
         if (! $response->successful()) {
-            Log::error('Failed to negotiate token with agency server', ['response' => $response->body()]);
+            Log::error('Failed to negotiate token with eyris server', ['response' => $response->body()]);
 
             return;
         }
 
         if (! $installationId = Arr::get($response->json(), 'installation_id')) {
-            Log::error('Failed to negotiate token with agency server', $response->json());
+            Log::error('Failed to negotiate token with eyris server', $response->json());
 
             return;
         }
@@ -72,21 +72,21 @@ class Agency
     public function saveSettings(Collection $settings): void
     {
         if ($this->supportsAddonSettings) {
-            Addon::get('thoughtco/statamic-agency')->settings()->set($settings->all())->save();
+            Addon::get('thoughtco/statamic-eyris')->settings()->set($settings->all())->save();
 
             return;
         }
 
-        File::put(resource_path('addons/statamic-agency.yaml'), json_encode($settings->all()));
+        File::put(resource_path('addons/statamic-eyris.yaml'), json_encode($settings->all()));
     }
 
     public function settings(): Collection
     {
         if ($this->supportsAddonSettings) {
-            return collect(Addon::get('thoughtco/statamic-agency')->settings()->all());
+            return collect(Addon::get('thoughtco/statamic-eyris')->settings()->all());
         }
 
-        $path = resource_path('addons/statamic-agency.yaml');
+        $path = resource_path('addons/statamic-eyris.yaml');
 
         if (! File::exists($path) || ! $file = File::get($path)) {
             return collect();

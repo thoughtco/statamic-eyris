@@ -1,11 +1,11 @@
 <?php
 
-namespace Thoughtco\StatamicAgency\Tests;
+namespace Thoughtco\Eyris\Tests;
 
 use Illuminate\Encryption\Encrypter;
 use Statamic\Testing\AddonTestCase;
 use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
-use Thoughtco\StatamicAgency\ServiceProvider;
+use Thoughtco\Eyris\ServiceProvider;
 
 class TestCase extends AddonTestCase
 {

@@ -1,19 +1,19 @@
 <?php
 
-namespace Thoughtco\StatamicAgency\Http\Middleware;
+namespace Thoughtco\Eyris\Http\Middleware;
 
 use Closure;
-use Thoughtco\StatamicAgency\Facades\Agency;
+use Thoughtco\Eyris\Facades\Agent;
 
-class VerifyAgencyHeaders
+class VerifyEyrisHeaders
 {
     public function handle($request, Closure $next)
     {
-        if (! config('statamic-agency.enabled')) {
+        if (! config('statamic-eyris.enabled')) {
             return $this->invalidResponse();
         }
 
-        if (! $token = config('statamic-agency.account_token')) {
+        if (! $token = config('statamic-eyris.account_token')) {
             return $this->invalidResponse();
         }
 
@@ -21,11 +21,11 @@ class VerifyAgencyHeaders
             return $this->invalidResponse();
         }
 
-        if (! $addonSettings = Agency::settings()) {
+        if (! $addonSettings = Agent::settings()) {
             return $this->invalidResponse();
         }
 
-        if ($addonSettings->get('installation_id') != $request->header('X-Agency-Installation-Id')) {
+        if ($addonSettings->get('installation_id') != $request->header('X-Eyris-Installation-Id')) {
             return $this->invalidResponse();
         }
 

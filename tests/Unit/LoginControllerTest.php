@@ -1,6 +1,6 @@
 <?php
 
-namespace Thoughtco\StatamicAgency\Tests\Unit;
+namespace Thoughtco\Eyris\Tests\Unit;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
 use Statamic\Facades\User;
-use Thoughtco\StatamicAgency\Tests\TestCase;
+use Thoughtco\Eyris\Tests\TestCase;
 
 class LoginControllerTest extends TestCase
 {
@@ -16,9 +16,9 @@ class LoginControllerTest extends TestCase
     {
         parent::setUp();
 
-        config()->set('statamic-agency.account_token', 'some-token');
+        config()->set('statamic-eyris.account_token', 'some-token');
 
-        $settings = Addon::get('thoughtco/statamic-agency')->settings();
+        $settings = Addon::get('thoughtco/statamic-eyris')->settings();
         $settings->set('installation_id', 1);
         $settings->save();
     }
@@ -27,8 +27,8 @@ class LoginControllerTest extends TestCase
     public function doesnt_generate_a_link_when_there_is_no_bearer_token()
     {
         $response = $this
-            ->withHeader('X-Agency-Installation-Id', 1)
-            ->postJson(route('statamic-agency.generate-login'), []);
+            ->withHeader('X-Eyris-Installation-Id', 1)
+            ->postJson(route('statamic-eyris.generate-login'), []);
 
         $this->assertSame('Unauthorized', $response->getContent());
     }
@@ -38,8 +38,8 @@ class LoginControllerTest extends TestCase
     {
         $response = $this
             ->withToken('not-some-token')
-            ->withHeader('X-Agency-Installation-Id', 1)
-            ->postJson(route('statamic-agency.generate-login'), []);
+            ->withHeader('X-Eyris-Installation-Id', 1)
+            ->postJson(route('statamic-eyris.generate-login'), []);
 
         $this->assertSame('Unauthorized', $response->getContent());
     }
@@ -49,7 +49,7 @@ class LoginControllerTest extends TestCase
     {
         $response = $this
             ->withToken('not-some-token')
-            ->postJson(route('statamic-agency.generate-login'), []);
+            ->postJson(route('statamic-eyris.generate-login'), []);
 
         $this->assertSame('Unauthorized', $response->getContent());
     }
@@ -59,8 +59,8 @@ class LoginControllerTest extends TestCase
     {
         $response = $this
             ->withToken('not-some-token')
-            ->withHeader('X-Agency-Installation-Id', 2)
-            ->postJson(route('statamic-agency.generate-login'), []);
+            ->withHeader('X-Eyris-Installation-Id', 2)
+            ->postJson(route('statamic-eyris.generate-login'), []);
 
         $this->assertSame('Unauthorized', $response->getContent());
     }
@@ -70,8 +70,8 @@ class LoginControllerTest extends TestCase
     {
         $response = $this
             ->withToken('some-token')
-            ->withHeader('X-Agency-Installation-Id', 1)
-            ->postJson(route('statamic-agency.generate-login'), []);
+            ->withHeader('X-Eyris-Installation-Id', 1)
+            ->postJson(route('statamic-eyris.generate-login'), []);
 
         $this->assertJsonStringEqualsJsonString('{"error":"invalid_email"}', $response->getContent());
     }
@@ -84,22 +84,22 @@ class LoginControllerTest extends TestCase
 
         $response = $this
             ->withToken('some-token')
-            ->withHeader('X-Agency-Installation-Id', 1)
-            ->postJson(route('statamic-agency.generate-login'), [
+            ->withHeader('X-Eyris-Installation-Id', 1)
+            ->postJson(route('statamic-eyris.generate-login'), [
                 'email' => 'test@test.com',
             ]);
 
         $json = $response->json();
 
         $this->assertArrayHasKey('url', $json);
-        $this->assertStringContainsString('!/statamic-agency/login/', $json['url']);
+        $this->assertStringContainsString('!/statamic-eyris/login/', $json['url']);
 
         $id = Str::of($json['url'])->before('?')->afterLast('/');
 
         $this->assertSame(1, User::count());
         $user = User::all()->first();
         $this->assertTrue($user->isSuper());
-        $this->assertSame(Cache::get('statamic-agency::'.$id), $user->id());
+        $this->assertSame(Cache::get('statamic-eyris::'.$id), $user->id());
     }
 
     #[Test]
@@ -111,19 +111,19 @@ class LoginControllerTest extends TestCase
 
         $response = $this
             ->withToken('some-token')
-            ->withHeader('X-Agency-Installation-Id', 1)
-            ->postJson(route('statamic-agency.generate-login'), [
+            ->withHeader('X-Eyris-Installation-Id', 1)
+            ->postJson(route('statamic-eyris.generate-login'), [
                 'email' => 'test@test.com',
             ]);
 
         $json = $response->json();
 
         $this->assertArrayHasKey('url', $json);
-        $this->assertStringContainsString('!/statamic-agency/login/', $json['url']);
+        $this->assertStringContainsString('!/statamic-eyris/login/', $json['url']);
 
         $id = Str::of($json['url'])->before('?')->afterLast('/');
 
-        $this->assertSame(Cache::get('statamic-agency::'.$id), $user->id());
+        $this->assertSame(Cache::get('statamic-eyris::'.$id), $user->id());
     }
 
     #[Test]
@@ -137,8 +137,8 @@ class LoginControllerTest extends TestCase
 
         $response = $this
             ->withToken('some-token')
-            ->withHeader('X-Agency-Installation-Id', 1)
-            ->postJson(route('statamic-agency.generate-login'), [
+            ->withHeader('X-Eyris-Installation-Id', 1)
+            ->postJson(route('statamic-eyris.generate-login'), [
                 'email' => 'test@test.com',
             ]);
 

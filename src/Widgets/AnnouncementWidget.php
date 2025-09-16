@@ -1,20 +1,21 @@
 <?php
 
-namespace Thoughtco\StatamicAgency\Widgets;
+namespace Thoughtco\Eyris\Widgets;
 
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 use Statamic\Statamic;
 use Statamic\Widgets\Widget;
-use Thoughtco\StatamicAgency\Facades\Agency;
+use Thoughtco\Eyris\Facades\Agent;
 
 class AnnouncementWidget extends Widget
 {
-    public static $handle = 'announcements';
+    public static $handle = 'eyris-announcements';
 
     public bool $supportsStatamicUiLibrary = false;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->supportsStatamicUiLibrary = substr(Statamic::version(), 0, 1) >= 6;
     }
 
@@ -25,10 +26,10 @@ class AnnouncementWidget extends Widget
         }
 
         $announcements = Cache::remember($this::$handle.'::announcements', 3600, function () {
-            return Agency::getAnnouncements();
+            return Agent::getAnnouncements();
         });
 
-        return view('statamic-agency::widgets.announcement_widget', [
+        return view('statamic-eyris::widgets.announcement_widget', [
             'slides' => $announcements,
         ]);
     }

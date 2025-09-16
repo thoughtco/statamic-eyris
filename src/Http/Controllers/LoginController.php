@@ -1,6 +1,6 @@
 <?php
 
-namespace Thoughtco\StatamicAgency\Http\Controllers;
+namespace Thoughtco\Eyris\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,10 +39,10 @@ class LoginController
 
         $id = Str::random(32);
 
-        Cache::put('statamic-agency::'.$id, $user->id(), now()->addMinutes(3));
+        Cache::put('statamic-eyris::'.$id, $user->id(), now()->addMinutes(3));
 
         return [
-            'url' => URL::temporarySignedRoute('statamic-agency.login', now()->addMinutes(63), ['id' => $id]),
+            'url' => URL::temporarySignedRoute('statamic-eyris.login', now()->addMinutes(63), ['id' => $id]),
         ];
     }
 
@@ -52,7 +52,7 @@ class LoginController
             abort(403);
         }
 
-        if (! $userId = Cache::pull('statamic-agency::'.$id)) {
+        if (! $userId = Cache::pull('statamic-eyris::'.$id)) {
             abort(404);
         }
 

@@ -1,13 +1,13 @@
 {
-    "name": "thoughtco/statamic-agency",
+    "name": "thoughtco/statamic-eyris",
     "autoload": {
         "psr-4": {
-            "Thoughtco\\StatamicAgency\\": "src"
+            "Thoughtco\\Eyris\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Thoughtco\\StatamicAgency\\Tests\\": "tests"
+            "Thoughtco\\Eyris\\Tests\\": "tests"
         }
     },
     "require": {
@@ -25,12 +25,12 @@
     },
     "extra": {
         "statamic": {
-            "name": "Statamic Agency",
+            "name": "Statamic Eyris",
             "description": "Manage your Statamic sites from a centralised dashboard."
         },
         "laravel": {
             "providers": [
-                "Thoughtco\\StatamicAgency\\ServiceProvider"
+                "Thoughtco\\Eyris\\ServiceProvider"
             ]
         }
     },

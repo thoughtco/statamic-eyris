@@ -1,16 +1,16 @@
 <?php
 
-namespace Thoughtco\StatamicAgency;
+namespace Thoughtco\Eyris;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Statamic\Providers\AddonServiceProvider;
-use Thoughtco\StatamicAgency\Facades\Agency;
+use Thoughtco\Eyris\Facades\Agent;
 
 class ServiceProvider extends AddonServiceProvider
 {
     protected $vite = [
         'publicDirectory' => 'dist',
-        'hotFile' => 'vendor/statamic-agency/hot',
+        'hotFile' => 'vendor/statamic-eyris/hot',
         'input' => [
             'resources/js/cp.js',
         ],
@@ -22,13 +22,13 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'statamic-agency');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'statamic-eyris');
 
-        $this->mergeConfigFrom($config = __DIR__.'/../config/statamic-agency.php', 'statamic-agency');
+        $this->mergeConfigFrom($config = __DIR__.'/../config/statamic-eyris.php', 'statamic-eyris');
 
         $this->publishes([
-            $config => config_path('statamic-agency.php'),
-        ], 'statamic-agency-config');
+            $config => config_path('statamic-eyris.php'),
+        ], 'statamic-eyris-config');
     }
 
     public function booted(\Closure $callback)
@@ -36,7 +36,7 @@ class ServiceProvider extends AddonServiceProvider
         parent::booted($callback);
 
         $schedule = $this->app->make(Schedule::class);
-        $schedule->command('agency:update-environment')->everyFourHours();
+        $schedule->command('eyris:update-environment')->hourly();
     }
 
     public function bootAddon()
@@ -46,22 +46,22 @@ class ServiceProvider extends AddonServiceProvider
 
     private function setupIfRequired()
     {
-        $addonSettings = Agency::settings();
+        $addonSettings = Agent::settings();
 
         if ($addonSettings->get('installation_id')) {
 
             if ($addonSettings->get('last_environment_update', 0) < now()->subMinutes(60)->timestamp) {
-                Agency::updateEnvironment();
+                Agent::updateEnvironment();
             }
 
             return;
         }
 
-        if ($token = Agency::negotiateToken()) {
+        if ($token = Agent::negotiateToken()) {
             $addonSettings->put('installation_id', $token);
-            Agency::saveSettings($addonSettings);
+            Agent::saveSettings($addonSettings);
 
-            Agency::updateEnvironment();
+            Agent::updateEnvironment();
         }
     }
 }

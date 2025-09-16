@@ -1,12 +1,12 @@
 <?php
 
-namespace Thoughtco\StatamicAgency\Tests\Unit;
+namespace Thoughtco\Eyris\Tests\Unit;
 
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Addon;
-use Thoughtco\StatamicAgency\Facades\Agency;
-use Thoughtco\StatamicAgency\Tests\TestCase;
+use Thoughtco\Eyris\Facades\Agent;
+use Thoughtco\Eyris\Tests\TestCase;
 
 class FacadeTest extends TestCase
 {
@@ -14,7 +14,7 @@ class FacadeTest extends TestCase
     {
         parent::setUp();
 
-        $settings = Addon::get('thoughtco/statamic-agency')->settings();
+        $settings = Addon::get('thoughtco/statamic-eyris')->settings();
         $settings->set('installation_id', 1);
         $settings->save();
     }
@@ -26,9 +26,9 @@ class FacadeTest extends TestCase
             '*' => Http::response(['installation_id' => 1], 200, ['Content-Type' => 'application/json']),
         ]);
 
-        config()->set('statamic-agency.account_token', 'some-token');
+        config()->set('statamic-eyris.account_token', 'some-token');
 
-        $response = Agency::negotiateToken();
+        $response = Agent::negotiateToken();
 
         Http::assertSent(function ($request) {
             return stripos($request->url(), '/api/negotiate') !== false
@@ -47,14 +47,14 @@ class FacadeTest extends TestCase
             '*' => Http::response('', 200, ['Content-Type' => 'application/json']),
         ]);
 
-        config()->set('statamic-agency.account_token', 'some-token');
+        config()->set('statamic-eyris.account_token', 'some-token');
 
-        $settings = Addon::get('thoughtco/statamic-agency')->settings();
+        $settings = Addon::get('thoughtco/statamic-eyris')->settings();
         $settings->set('installation_id', 1);
         $settings->set('last_environment_update', 0);
         $settings->save();
 
-        Agency::updateEnvironment();
+        Agent::updateEnvironment();
 
         Http::assertSent(function ($request) {
             if (stripos($request->url(), '/api/environment') === false) {
@@ -71,7 +71,7 @@ class FacadeTest extends TestCase
                 && array_key_exists('packages', $payload);
         });
 
-        $this->assertSame(Addon::get('thoughtco/statamic-agency')->settings()->get('last_environment_update'), time().'');
+        $this->assertSame(Addon::get('thoughtco/statamic-eyris')->settings()->get('last_environment_update'), time().'');
     }
 
     #[Test]
@@ -83,20 +83,20 @@ class FacadeTest extends TestCase
             '*' => Http::response('', 200, ['Content-Type' => 'application/json']),
         ]);
 
-        config()->set('statamic-agency.account_token', 'some-token');
+        config()->set('statamic-eyris.account_token', 'some-token');
 
-        $settings = Addon::get('thoughtco/statamic-agency')->settings();
+        $settings = Addon::get('thoughtco/statamic-eyris')->settings();
         $settings->set('installation_id', 1);
         $settings->set('last_environment_update', 0);
         $settings->save();
 
-        Agency::hook('update-environment-payload', function ($payload, $next) {
+        Agent::hook('update-environment-payload', function ($payload, $next) {
             $payload['foo'] = 'bar';
 
             return $next($payload);
         });
 
-        Agency::updateEnvironment();
+        Agent::updateEnvironment();
 
         Http::assertSent(function ($request) {
             $payload = json_decode($request->body(), true);
