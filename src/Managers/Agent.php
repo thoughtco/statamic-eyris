@@ -77,6 +77,7 @@ class Agent
             return;
         }
 
+        File::ensureDirectoryExists(resource_path('addons'));
         File::put(resource_path('addons/statamic-eyris.yaml'), json_encode($settings->all()));
     }
 
