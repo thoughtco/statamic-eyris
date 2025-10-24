@@ -32,6 +32,10 @@
             "providers": [
                 "Thoughtco\\Eyris\\ServiceProvider"
             ]
+        },
+        "download-dist": {
+            "url": "https://github.com/thoughtco/statamic-eyris/releases/download/{$version}/dist.tar.gz",
+            "path": "dist"
         }
     },
     "config": {
