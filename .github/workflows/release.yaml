@@ -1,4 +1,4 @@
-name: Create Release
+name: Bundle Release Assets
 
 on:
   workflow_dispatch:
