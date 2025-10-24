@@ -35,7 +35,7 @@ class Agent
 
         $this->client = Http::withToken(config('statamic-eyris.account_token'))
             ->withHeader('Accept', 'application/json')
-            ->baseUrl('https://statamic-agency-app-tuue2udz.ams1.preview.ploi.it/api/');
+            ->baseUrl('https://watch.eyris.app/api/');
 
         return $this->client;
     }
