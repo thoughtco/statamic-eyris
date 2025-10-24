@@ -39,5 +39,6 @@
             "pestphp/pest-plugin": true,
             "pixelfear/composer-dist-plugin": true
         }
-    }
+    },
+    "minimum-stability": "alpha"
 }
