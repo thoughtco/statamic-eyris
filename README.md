@@ -11,12 +11,12 @@ Run the following command from your project root:
 composer require thoughtco/statamic-eyris
 ```
 
-Add your Agency account token to the .env key `STATAMIC_EYRIS_ACCOUNT_TOKEN`
+Add your Agency account token to the .env key `EYRIS_TOKEN`
 
 e.g. 
 
 ```bash
-STATAMIC_EYRIS_ACCOUNT_TOKEN="my-token"
+EYRIS_TOKEN="my-token"
 ```
 
 You can also optionally publish the config: 
@@ -46,3 +46,5 @@ If you want to return extra data to Eyris, you can hook into the update environm
 We provide an announcement widget to let you push announcements from the system to your site.
 
 To enable it add `eyris-announcements` to `config/statamic/cp.php` under the 'widgets' key.
+
+Note: this feature is only supported on Statamic v6+.
