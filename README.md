@@ -11,9 +11,7 @@ Run the following command from your project root:
 composer require thoughtco/statamic-eyris
 ```
 
-Add your Agency account token to the .env key `EYRIS_TOKEN`
-
-e.g. 
+Sign up for an account at [www.eyris.app](https://www.eyris.app), then add your Eyris account token to your .env file:
 
 ```bash
 EYRIS_TOKEN="my-token"
