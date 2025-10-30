@@ -51,7 +51,7 @@ class ServiceProvider extends AddonServiceProvider
         if ($addonSettings->get('installation_id')) {
 
             if ($addonSettings->get('last_environment_update', 0) < now()->subMinutes(60)->timestamp) {
-                Agent::updateEnvironment();
+                dispatch(fn () => Agent::updateEnvironment())->afterResponse();
             }
 
             return;
