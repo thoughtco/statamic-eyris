@@ -24,7 +24,7 @@ class Agent
 
     public function __construct()
     {
-        $this->supportsAddonSettings = app()->environment('testing') ? true : substr(Statamic::version(), 0, 1) >= 6;
+        $this->supportsAddonSettings = env('EYRIS_TEST_SUITE') ? true : substr(Statamic::version(), 0, 1) >= 6;
     }
 
     private function client()
@@ -78,7 +78,8 @@ class Agent
         }
 
         File::ensureDirectoryExists(resource_path('addons'));
-        File::put(resource_path('addons/statamic-eyris.yaml'), json_encode($settings->all()));
+
+        File::put(resource_path('addons/statamic-eyris.yaml'), YAML::dump($settings->all()));
     }
 
     public function settings(): Collection
