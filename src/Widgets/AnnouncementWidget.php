@@ -10,7 +10,7 @@ use Thoughtco\Eyris\Facades\Agent;
 
 class AnnouncementWidget extends Widget
 {
-    public static $handle = 'eyris-announcements';
+    public static $handle = 'eyris_announcements';
 
     public bool $supportsStatamicUiLibrary = false;
 

@@ -109,7 +109,7 @@ class Agent
             return;
         }
 
-        return $this->client->post('announcements', ['installation_id' => $installationId])->json();
+        return $this->client()->post('announcements', ['installation_id' => $installationId])->json();
     }
 
     public function updateEnvironment()
